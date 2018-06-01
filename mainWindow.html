@@ -10,17 +10,20 @@
         <input type="file" id="file-object">
         <input type="button" id="startpro" value="자리 바꾸기">
         <input type="button" id="startpro_delay" value="자리 천천히 바꾸기">
+        <input type="button" id="startpro_delay_mm" value="멘토 멘티 자리 바꾸기">
+        <input type="button" id="reverse" value="시점 변환">
         <input type="button" id="clear" value="초기화">
         </div>
         <hr>
+        <div id="view_1">
         <table id="board">
             <tr>
                 <td>
-                    칠판
+                    2학년 8반 자리표
                 </td>
             </tr>
         </table>
-
+        </div>
         <table class="mainTable_l">
             <tbody>
                 <tr>
@@ -159,24 +162,65 @@
                 </tr>
             </tbody>
         </table>
+        <div id="view_2"></div>
         <script>
             
             const file = document.getElementById('file-object');
             const start = document.getElementById('startpro');
             const startWithDelay = document.getElementById('startpro_delay');
+            const startWithDelay_mm = document.getElementById('startpro_delay_mm');
             const clear_event = document.getElementById('clear');
+            const reverse_display = document.getElementById('reverse');
             const XLSX = require('xlsx');
             var jsn = [];
+            var mento_menti = [{'isFront': false, 'mento': '김민종', 'menti': '윤동현'}, 
+            {'isFront': false, 'mento': '유태환', 'menti': '차왕연'}, 
+            {'isFront': false, 'mento': '강서현', 'menti': '남채연'}, 
+            {'isFront': false, 'mento': '이태권', 'menti': '김정호'}, 
+            {'isFront': false, 'mento': '전승완', 'menti': '공승준'}, 
+            {'isFront': false, 'mento': '서가영', 'menti': '황승은'}, 
+            {'isFront': false, 'mento': '김원용', 'menti': '이종민'}, 
+            {'isFront': false, 'mento': '이하균', 'menti': '김혜임'}, 
+            {'isFront': false, 'mento': '고연우', 'menti': '이현민'}, 
+            {'isFront': false, 'mento': '이우주', 'menti': '장민경'}, 
+            {'isFront': false, 'mento': '김예희', 'menti': '박수진'}, 
+            {'isFront': false, 'mento': '이준영', 'menti': '임남규'}, 
+            {'isFront': false, 'mento': '이태규', 'menti': '오원택'}, 
+            {'isFront': false, 'mento': '여찬주', 'menti': '최준혁'}, 
+            {'isFront': false, 'mento': '홍우진', 'menti': '서용준'}, 
+            {'isFront': false, 'mento': '권주안', 'menti': '남예성'}, 
+            {'isFront': false, 'mento': '최효비', 'menti': '우희수'}, 
+            {'isFront': false, 'mento': '박성은', 'menti': '한승비'}, 
+            {'isFront': false, 'mento': '신윤섭', 'menti': '박한준'}, ]
+            var reverseDisplay = function(){
+                var id = 1;
+                const max = 41;
+                if(document.getElementById("view_2").innerHTML == ""){
+                    document.getElementById("view_2").innerHTML = "<table id=\"board\"><tr><td>2학년 8반 자리표</td></tr></table>"
+                    document.getElementById("view_1").innerHTML = ""
+                }
+                else{
+                    document.getElementById("view_1").innerHTML = "<table id=\"board\"><tr><td>2학년 8반 자리표</td></tr></table>"
+                    document.getElementById("view_2").innerHTML = ""
+                }
+                
+                for(id; id<=20; id++){
+                    var temp = document.getElementById(String(id)).innerText
+                    document.getElementById(String(id)).innerHTML = document.getElementById(String(max - id)).innerText;
+                    document.getElementById(String(max - id)).innerHTML = temp;
+                }
+            }
             var clearDisplay = function(target) {
                 var i = 1;
                 if(jsn.length == 0){
                     alert('명렬표를 먼저 등록해 주세요.');
-                    return;
+                    return 0;
                 }
                 var max = jsn.length;
                 for(i;i<=max;i++){
                     target(i);
                 }
+                return 1;
             }
             var clearName = function(i) {
                 element = document.getElementById(String(i));
@@ -243,6 +287,45 @@
                 start_m.play();
                 
             }
+            var startRandomizeWithDelayMM = function(std_name_arr, start_m, ending_m){
+                var std_max_num = std_name_arr.length
+                var std_sit_arr = makeMixedArr(std_max_num);
+                var std_num_arr = makeMixedArr(std_max_num);
+                var index = 0;
+                var loop = function () {
+                    setTimeout(function() {
+                        const sit_number = ((std_sit_arr[index] * 2) - 1);
+                        const mm_object = std_name_arr[std_num_arr[index] - 1];
+                        const element_mento = document.getElementById(String(sit_number));
+                        const element_menti = document.getElementById(String(sit_number + 1));
+                        console.log(mm_object)
+                        element_mento.innerHTML = mm_object["mento"];
+                        element_menti.innerHTML = mm_object["menti"];
+
+                        element_mento.style.backgroundColor = "rgba(132,125,236,0.7)";
+                        element_menti.style.backgroundColor = "rgba(132,125,236,0.7)";
+                        if(index != 0){
+                            document.getElementById(String(std_sit_arr[index-1] * 2 - 1)).style.backgroundColor = "white";
+                            document.getElementById(String(std_sit_arr[index-1] * 2)).style.backgroundColor = "white";
+                        }
+                        index++;
+                        if(index == std_max_num){
+                            start_m.pause();
+                            ending_m.play();
+                            setTimeout(function(){
+                                element_mento.style.backgroundColor = "white";
+                                element_menti.style.backgroundColor = "white";
+                            }, 1000);
+                        }
+                        if(index < std_max_num){
+                            loop();
+                        }
+                    }, 1000);
+                }
+                loop();
+                start_m.play();
+                
+            }
             var startRandomize = function(std_name_arr){
                 var std_max_num = std_name_arr.length
                 var std_sit_arr = makeMixedArr(std_max_num);
@@ -255,16 +338,26 @@
             start.addEventListener("click", function(e) {
                 startRandomize(jsn);
             })
-            startWithDelay.addEventListener('click', function(e) {
+            startWithDelay_mm.addEventListener("click", function(e) {
                 var start_m = new Audio('kkutu_mix.mp3');
                 var ending_m = new Audio('ending.mp3');
                 clearDisplay(clearName);
-                startRandomizeWithDelay(jsn, start_m, ending_m);
+                startRandomizeWithDelayMM(mento_menti, start_m, ending_m);
+            })
+            startWithDelay.addEventListener('click', function(e) {
+                var start_m = new Audio('kkutu_mix.mp3');
+                var ending_m = new Audio('ending.mp3');
+                if(clearDisplay(clearName)){
+                    startRandomizeWithDelay(jsn, start_m, ending_m);
+                }
                 
             })
             clear_event.addEventListener('click', function(e){
                 clearDisplay(clearName);
                 clearDisplay(clearBackground);
+            })
+            reverse_display.addEventListener('click', function(e){
+                reverseDisplay();
             })
             file.addEventListener("change", function(e) {
                 var files = e.target.files,file;

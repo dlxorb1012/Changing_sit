@@ -9,7 +9,7 @@ table{
     float:left;
     table-layout: fixed;
     background-color: white;
-    
+    margin: 20px auto;
 }
 .mainTable_l{
     margin-right: 2%;
@@ -20,7 +20,7 @@ table{
     margin-right: 2%;
 }
 .mainTable_m{
-    margin: 0px 2%;
+    margin: 20px 2%;
 }
 tr{
     height: 20%;
@@ -38,7 +38,7 @@ html, body{
 #board{
     width: 50%;
     height: 25px;
-    margin: 20px 25%;
+    margin: auto 25%;
     background-color: #1DA01D;
 }
 hr{
